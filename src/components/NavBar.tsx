@@ -5,6 +5,10 @@ import { BellIcon, PersonIcon, HamburgerMenuIcon, Cross1Icon } from '@radix-ui/r
 import { Button, Text } from '@radix-ui/themes';
 import { motion, AnimatePresence } from 'framer-motion';
 
+interface NavBarProps {
+  onNewTaskClick: () => void;
+}
+
 const NavButton = ({ children, className, ...props }: { children: React.ReactNode, className?: string, onClick?: () => void }) => (
   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
     <Button variant="soft" className={`nav-button ${className}`} {...props}>
@@ -13,7 +17,7 @@ const NavButton = ({ children, className, ...props }: { children: React.ReactNod
   </motion.div>
 );
 
-const NavBar = () => {
+const NavBar = ({ onNewTaskClick }: NavBarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -25,6 +29,11 @@ const NavBar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleNewTask = () => {
+    setIsMenuOpen(false);
+    onNewTaskClick();
+  }
+
   return (
     <>
       <nav className={`navbar ${hasScrolled ? 'scrolled' : ''}`}>
@@ -34,7 +43,7 @@ const NavBar = () => {
 
         {/* Desktop Navigation */}
         <div className="navbar-center hidden md:flex">
-          <NavButton>New Task</NavButton>
+          <NavButton onClick={onNewTaskClick}>New Task</NavButton>
           <NavButton>Your Tasks</NavButton>
         </div>
 
@@ -75,7 +84,7 @@ const NavBar = () => {
                   <Cross1Icon width="20" height="20" />
                 </Button>
               </div>
-              <NavButton>New Task</NavButton>
+              <NavButton onClick={handleNewTask}>New Task</NavButton>
               <NavButton>Your Tasks</NavButton>
               <NavButton>
                 <BellIcon width="20" height="20" />

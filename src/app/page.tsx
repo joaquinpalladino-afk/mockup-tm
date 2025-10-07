@@ -51,7 +51,7 @@ export default function YourTasksPage() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-12"
+        className="text-center mb-12 pt-16"
       >
         <h1 className="text-5xl font-extrabold tracking-tight">Your Tasks</h1>
       </motion.header>
