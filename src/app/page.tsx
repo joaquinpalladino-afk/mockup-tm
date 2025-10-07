@@ -1,23 +1,23 @@
 'use client';
 
-import { ChevronDown, Search } from 'lucide-react';
+import { ChevronDown, Search, Check, Trash2 } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { motion } from 'framer-motion';
 
 const tags = ["All", "Work", "Personal", "Urgent", "Shopping"];
 
 const pendingTasks = [
-  { id: 1, title: "Finish Q3 report", description: "Complete the financial analysis and submit to management." },
-  { id: 2, title: "Design new landing page", description: "Create mockups for the new marketing campaign." },
-  { id: 3, title: "Call the electrician", description: "Schedule an appointment to fix the kitchen light." },
-  { id: 4, title: "Buy groceries", description: "Milk, eggs, bread, and coffee." },
-  { id: 5, title: "Plan weekend trip", description: "Research destinations and book accommodation." },
+  { id: 1, title: "Finish Q3 report", description: "Complete the financial analysis and submit to management.", dueDate: "2023-10-15", priority: "High", tag: "Work", status: "pending" },
+  { id: 2, title: "Design new landing page", description: "Create mockups for the new marketing campaign.", dueDate: "2023-10-20", priority: "Medium", tag: "Personal", status: "pending" },
+  { id: 3, title: "Call the electrician", description: "Schedule an appointment to fix the kitchen light.", dueDate: "2023-10-12", priority: "High", tag: "Urgent", status: "pending" },
+  { id: 4, title: "Buy groceries", description: "Milk, eggs, bread, and coffee.", dueDate: "2023-10-11", priority: "Low", tag: "Shopping", status: "pending" },
+  { id: 5, title: "Plan weekend trip", description: "Research destinations and book accommodation.", dueDate: "2023-10-14", priority: "Medium", tag: "Personal", status: "pending" },
 ];
 
 const completedTasks = [
-  { id: 6, title: "Onboard new team member", description: "Initial meeting and project overview." },
-  { id: 7, title: "Fix login bug", description: "Patched the authentication flow vulnerability." },
-  { id: 8, title: "Pay monthly bills", description: "Internet, electricity, and water." },
+  { id: 6, title: "Onboard new team member", description: "Initial meeting and project overview.", dueDate: "2023-10-05", priority: "High", tag: "Work", status: "completed" },
+  { id: 7, title: "Fix login bug", description: "Patched the authentication flow vulnerability.", dueDate: "2023-10-02", priority: "High", tag: "Urgent", status: "completed" },
+  { id: 8, title: "Pay monthly bills", description: "Internet, electricity, and water.", dueDate: "2023-10-01", priority: "Medium", tag: "Personal", status: "completed" },
 ];
 
 const containerVariants = {
@@ -33,16 +33,56 @@ const itemVariants = {
   visible: { y: 0, opacity: 1 },
 };
 
-const TaskCard = ({ title, description }: { title: string, description: string }) => (
-  <motion.div
-    variants={itemVariants}
-    whileHover={{ scale: 1.03 }}
-    className="bg-[#2a2a2a] border border-[#444444] rounded-lg p-4 shadow-lg hover:border-[#156193] transition-colors duration-300"
-  >
-    <h3 className="font-bold text-lg text-gray-200">{title}</h3>
-    <p className="text-gray-400 text-sm mt-1">{description}</p>
-  </motion.div>
-);
+const TaskCard = ({ title, description, dueDate, priority, tag, status }: { title: string, description: string, dueDate: string, priority: string, tag: string, status: string }) => {
+  const isCompleted = status === 'completed';
+
+  const priorityColors: { [key: string]: string } = {
+    High: 'bg-red-500/20 text-red-400',
+    Medium: 'bg-yellow-500/20 text-yellow-400',
+    Low: 'bg-green-500/20 text-green-400',
+  };
+
+  return (
+    <motion.div
+      variants={itemVariants}
+      whileHover={{ scale: 1.03 }}
+      className={`rounded-lg p-4 shadow-lg transition-colors duration-300 flex flex-col justify-between h-full ${
+        isCompleted
+          ? 'bg-[#2a2a2a]/50 border border-[#333333]'
+          : 'bg-[#2a2a2a] border border-[#444444] hover:border-[#156193]'
+      }`}
+    >
+      <div>
+        <h3 className={`font-bold text-lg ${isCompleted ? 'line-through text-gray-500' : 'text-gray-200'}`}>{title}</h3>
+        <p className={`text-sm mt-1 ${isCompleted ? 'line-through text-gray-600' : 'text-gray-400'}`}>{description}</p>
+        
+        <div className={`mt-4 flex items-center text-xs ${isCompleted ? 'text-gray-600' : 'text-gray-500'}`}>
+          <span className={`${isCompleted ? 'line-through' : ''}`}>{dueDate}</span>
+        </div>
+
+        <div className="mt-2 flex items-center gap-2">
+          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${isCompleted ? 'line-through bg-gray-700 text-gray-500' : priorityColors[priority]}`}>
+            {priority}
+          </span>
+          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${isCompleted ? 'line-through bg-gray-700 text-gray-500' : 'bg-blue-500/20 text-blue-400'}`}>
+            {tag}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2 mt-4">
+        {!isCompleted && (
+          <button className="p-2 rounded-full hover:bg-green-500/20 text-green-400 transition-colors">
+            <Check size={16} />
+          </button>
+        )}
+        <button className="p-2 rounded-full hover:bg-red-500/20 text-red-400 transition-colors">
+          <Trash2 size={16} />
+        </button>
+      </div>
+    </motion.div>
+  );
+};
 
 export default function YourTasksPage() {
   return (
@@ -106,10 +146,10 @@ export default function YourTasksPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6"
           >
             {pendingTasks.map(task => (
-              <TaskCard key={task.id} title={task.title} description={task.description} />
+              <TaskCard key={task.id} {...task} />
             ))}
           </motion.div>
         </motion.section>
@@ -121,10 +161,10 @@ export default function YourTasksPage() {
             variants={containerVariants}
             initial="hidden"
             animate="visible"
-            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-6"
           >
             {completedTasks.map(task => (
-              <TaskCard key={task.id} title={task.title} description={task.description} />
+              <TaskCard key={task.id} {...task} />
             ))}
           </motion.div>
         </motion.section>
