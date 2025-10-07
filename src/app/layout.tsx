@@ -31,8 +31,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Theme appearance="dark">
-          <NavBar />
-          {children}
+          <header className="fixed top-0 left-0 w-full z-50 bg-[#1a1a1a] border-b border-[#444444]">
+            <NavBar />
+          </header>
+          <main className="pt-20">
+            {children}
+          </main>
         </Theme>
       </body>
     </html>
