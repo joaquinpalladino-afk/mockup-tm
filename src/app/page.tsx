@@ -9,7 +9,7 @@ import { TaskDetail } from '@/components/TaskDetail';
 
 const tags = ["All", "Work", "Personal", "Urgent", "Shopping"];
 
-const pendingTasks = [
+const pendingTasks: Task[] = [
   { id: 1, title: "Finish Q3 report", description: "Complete the financial analysis and submit to management.", dueDate: "2023-10-15", priority: "high", tags: ["Work"], status: "pending" },
   { id: 2, title: "Design new landing page", description: "Create mockups for the new marketing campaign.", dueDate: "2023-10-20", priority: "medium", tags: ["Design"], status: "pending" },
   { id: 3, title: "Call the electrician", description: "Schedule an appointment to fix the kitchen light.", dueDate: "2023-10-12", priority: "high", tags: ["Home"], status: "pending" },
@@ -17,7 +17,7 @@ const pendingTasks = [
   { id: 5, title: "Plan weekend trip", description: "Research destinations and book accommodation.", dueDate: "2023-10-14", priority: "medium", tags: ["Personal"], status: "pending" },
 ];
 
-const completedTasks = [
+const completedTasks: Task[] = [
   { id: 6, title: "Onboard new team member", description: "Initial meeting and project overview.", dueDate: "2023-10-05", priority: "high", tags: ["Work"], status: "completed" },
   { id: 7, title: "Fix login bug", description: "Patched the authentication flow vulnerability.", dueDate: "2023-10-02", priority: "high", tags: ["Bug"], status: "completed" },
   { id: 8, title: "Pay monthly bills", description: "Internet, electricity, and water.", dueDate: "2023-10-01", priority: "medium", tags: ["Finance"], status: "completed" },
@@ -36,7 +36,15 @@ const itemVariants = {
   visible: { y: 0, opacity: 1 },
 };
 
-type Task = (typeof pendingTasks)[0];
+type Task = {
+  id: number;
+  title: string;
+  description: string;
+  dueDate: string;
+  priority: "high" | "medium" | "low";
+  tags: string[];
+  status: string;
+};
 
 const TaskCard = ({ task, onTaskClick }: { task: Task, onTaskClick: (task: Task) => void }) => {
   const { title, description, dueDate, priority, tags, status } = task;
