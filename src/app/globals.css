@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Dark Theme */
+  --background: #0D1117;
+  --foreground: #C9D1D9;
+  --primary-color: #156193;
+  --secondary-color: #8B949E; /* Adjusted for better contrast in dark mode */
 }
 
 @theme inline {
@@ -12,15 +15,67 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* NavBar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #161B22;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #30363d;
+  color: var(--secondary-color);
+}
+
+.navbar-left, .navbar-center, .navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-text {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.nav-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--foreground); /* Use main foreground for better visibility */
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.nav-button:hover {
+  background-color: rgba(187, 204, 218, 0.1); /* Subtle hover for dark mode */
+}
+
+.user-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar-center {
+    display: none;
+  }
+
+  .navbar {
+    padding: 1rem;
+  }
+
+  .brand-text {
+    font-size: 1.25rem;
+  }
 }
