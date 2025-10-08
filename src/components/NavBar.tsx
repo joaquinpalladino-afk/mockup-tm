@@ -5,6 +5,8 @@ import { BellIcon, PersonIcon, HamburgerMenuIcon, Cross1Icon } from '@radix-ui/r
 import { Button, Text } from '@radix-ui/themes';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import Link from 'next/link';
+
 interface NavBarProps {
   onNewTaskClick: () => void;
 }
@@ -44,7 +46,9 @@ const NavBar = ({ onNewTaskClick }: NavBarProps) => {
         {/* Desktop Navigation */}
         <div className="navbar-center hidden md:flex">
           <NavButton onClick={onNewTaskClick}>New Task</NavButton>
-          <NavButton>Your Tasks</NavButton>
+          <Link href="/">
+            <NavButton>Your Tasks</NavButton>
+          </Link>
         </div>
 
         <div className="navbar-right hidden md:flex">
@@ -86,10 +90,12 @@ const NavBar = ({ onNewTaskClick }: NavBarProps) => {
               </div>
               <NavButton onClick={handleNewTask}>New Task</NavButton>
               <NavButton>Your Tasks</NavButton>
-              <NavButton>
-                <BellIcon width="20" height="20" />
-                <span className="user-text">Notifications</span>
-              </NavButton>
+              <Link href="/notifications">
+                <NavButton>
+                  <BellIcon width="20" height="20" />
+                  <span className="user-text">Notifications</span>
+                </NavButton>
+              </Link>
               <NavButton className="user-button">
                 <PersonIcon width="20" height="20" />
                 <span className="user-text">User</span>

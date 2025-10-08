@@ -36,7 +36,7 @@ export default function RootLayout({
             <NavBar onNewTaskClick={() => setIsNewTaskOpen(true)} />
           </header>
           <NewTask isOpen={isNewTaskOpen} onOpenChange={setIsNewTaskOpen} />
-          <main className="pt-20">
+          <main>
             {children}
           </main>
         </Theme>

@@ -114,7 +114,7 @@ export default function YourTasksPage() {
   };
 
   return (
-    <div className="bg-[#1a1a1a] text-gray-100 min-h-screen p-4 sm:p-8">
+    <div className="bg-[#1a1a1a] text-gray-100 min-h-screen p-4 sm:p-8 pt-20">
       <NewTask isOpen={isNewTaskOpen} onOpenChange={setIsNewTaskOpen} />
       <TaskDetail isOpen={!!selectedTask} onOpenChange={handleCloseDetail} task={selectedTask ? { ...selectedTask, expiresAt: selectedTask.dueDate } : null} />
 
