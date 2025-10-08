@@ -9,20 +9,6 @@ import { TaskDetail } from '@/components/TaskDetail';
 
 const tags = ["All", "Work", "Personal", "Urgent", "Shopping"];
 
-const pendingTasks: Task[] = [
-  { id: 1, title: "Finish Q3 report", description: "Complete the financial analysis and submit to management.", dueDate: "2023-10-15", priority: "high", tags: ["Work"], status: "pending" },
-  { id: 2, title: "Design new landing page", description: "Create mockups for the new marketing campaign.", dueDate: "2023-10-20", priority: "medium", tags: ["Design"], status: "pending" },
-  { id: 3, title: "Call the electrician", description: "Schedule an appointment to fix the kitchen light.", dueDate: "2023-10-12", priority: "high", tags: ["Home"], status: "pending" },
-  { id: 4, title: "Buy groceries", description: "Milk, eggs, bread, and coffee.", dueDate: "2023-10-11", priority: "low", tags: ["Shopping"], status: "pending" },
-  { id: 5, title: "Plan weekend trip", description: "Research destinations and book accommodation.", dueDate: "2023-10-14", priority: "medium", tags: ["Personal"], status: "pending" },
-];
-
-const completedTasks: Task[] = [
-  { id: 6, title: "Onboard new team member", description: "Initial meeting and project overview.", dueDate: "2023-10-05", priority: "high", tags: ["Work"], status: "completed" },
-  { id: 7, title: "Fix login bug", description: "Patched the authentication flow vulnerability.", dueDate: "2023-10-02", priority: "high", tags: ["Bug"], status: "completed" },
-  { id: 8, title: "Pay monthly bills", description: "Internet, electricity, and water.", dueDate: "2023-10-01", priority: "medium", tags: ["Finance"], status: "completed" },
-];
-
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -46,8 +32,8 @@ type Task = {
   status: string;
 };
 
-const TaskCard = ({ task, onTaskClick }: { task: Task, onTaskClick: (task: Task) => void }) => {
-  const { title, description, dueDate, priority, tags, status } = task;
+const TaskCard = ({ task, onTaskClick, onComplete, onDelete }: { task: Task, onTaskClick: (task: Task) => void, onComplete: (id: number) => void, onDelete: (id: number) => void }) => {
+  const { id, title, description, dueDate, priority, tags, status } = task;
   const isCompleted = status === 'completed';
 
   const priorityColors: { [key: string]: string } = {
@@ -89,11 +75,11 @@ const TaskCard = ({ task, onTaskClick }: { task: Task, onTaskClick: (task: Task)
 
       <div className="flex justify-end gap-2 mt-4">
         {!isCompleted && (
-          <button className="p-2 rounded-full hover:bg-green-500/20 text-green-400 transition-colors" onClick={(e) => e.stopPropagation()}>
+          <button className="p-2 rounded-full hover:bg-green-500/20 text-green-400 transition-colors" onClick={(e) => { e.stopPropagation(); onComplete(id); }}>
             <Check size={16} />
           </button>
         )}
-        <button className="p-2 rounded-full hover:bg-red-500/20 text-red-400 transition-colors" onClick={(e) => e.stopPropagation()}>
+        <button className="p-2 rounded-full hover:bg-red-500/20 text-red-400 transition-colors" onClick={(e) => { e.stopPropagation(); onDelete(id); }}>
           <Trash2 size={16} />
         </button>
       </div>
@@ -102,8 +88,45 @@ const TaskCard = ({ task, onTaskClick }: { task: Task, onTaskClick: (task: Task)
 };
 
 export default function YourTasksPage() {
+  const [pendingTasks, setPendingTasks] = useState<Task[]>([
+    { id: 1, title: "Finish Q3 report", description: "Complete the financial analysis and submit to management.", dueDate: "2023-10-15", priority: "high", tags: ["Work"], status: "pending" },
+    { id: 2, title: "Design new landing page", description: "Create mockups for the new marketing campaign.", dueDate: "2023-10-20", priority: "medium", tags: ["Design"], status: "pending" },
+    { id: 3, title: "Call the electrician", description: "Schedule an appointment to fix the kitchen light.", dueDate: "2023-10-12", priority: "high", tags: ["Home"], status: "pending" },
+    { id: 4, title: "Buy groceries", description: "Milk, eggs, bread, and coffee.", dueDate: "2023-10-11", priority: "low", tags: ["Shopping"], status: "pending" },
+    { id: 5, title: "Plan weekend trip", description: "Research destinations and book accommodation.", dueDate: "2023-10-14", priority: "medium", tags: ["Personal"], status: "pending" },
+  ]);
+
+  const [completedTasks, setCompletedTasks] = useState<Task[]>([
+    { id: 6, title: "Onboard new team member", description: "Initial meeting and project overview.", dueDate: "2023-10-05", priority: "high", tags: ["Work"], status: "completed" },
+    { id: 7, title: "Fix login bug", description: "Patched the authentication flow vulnerability.", dueDate: "2023-10-02", priority: "high", tags: ["Bug"], status: "completed" },
+    { id: 8, title: "Pay monthly bills", description: "Internet, electricity, and water.", dueDate: "2023-10-01", priority: "medium", tags: ["Finance"], status: "completed" },
+  ]);
+
   const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+
+  const handleAddTask = (task: Omit<Task, 'id' | 'status'>) => {
+    const newTask: Task = {
+      ...task,
+      id: Date.now(),
+      status: 'pending',
+    };
+    setPendingTasks(prev => [newTask, ...prev]);
+  };
+
+  const handleDeleteTask = (id: number) => {
+    setPendingTasks(prev => prev.filter(task => task.id !== id));
+    setCompletedTasks(prev => prev.filter(task => task.id !== id));
+  };
+
+  const handleCompleteTask = (id: number) => {
+    const taskToComplete = pendingTasks.find(task => task.id === id);
+    if (taskToComplete) {
+      const newCompletedTask = { ...taskToComplete, status: 'completed' };
+      setPendingTasks(prev => prev.filter(task => task.id !== id));
+      setCompletedTasks(prev => [newCompletedTask, ...prev]);
+    }
+  };
 
   const handleTaskClick = (task: Task) => {
     setSelectedTask(task);
@@ -115,7 +138,7 @@ export default function YourTasksPage() {
 
   return (
     <div className="bg-[#1a1a1a] text-gray-100 min-h-screen p-4 sm:p-8 pt-20">
-      <NewTask isOpen={isNewTaskOpen} onOpenChange={setIsNewTaskOpen} />
+      <NewTask isOpen={isNewTaskOpen} onOpenChange={setIsNewTaskOpen} onAddTask={handleAddTask} />
       <TaskDetail isOpen={!!selectedTask} onOpenChange={handleCloseDetail} task={selectedTask ? { ...selectedTask, expiresAt: selectedTask.dueDate } : null} />
 
       <motion.header
@@ -181,7 +204,7 @@ export default function YourTasksPage() {
           <h2 className="text-2xl font-bold mb-6 border-b-2 border-[#156193] pb-2 text-gray-200">Pending</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
             {pendingTasks.map(task => (
-              <TaskCard key={task.id} task={task} onTaskClick={handleTaskClick} />
+              <TaskCard key={task.id} task={task} onTaskClick={handleTaskClick} onComplete={handleCompleteTask} onDelete={handleDeleteTask} />
             ))}
           </div>
         </motion.section>
@@ -190,7 +213,7 @@ export default function YourTasksPage() {
           <h2 className="text-2xl font-bold mb-6 border-b-2 border-gray-600 pb-2 text-gray-400">Completed</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
             {completedTasks.map(task => (
-              <TaskCard key={task.id} task={task} onTaskClick={handleTaskClick} />
+              <TaskCard key={task.id} task={task} onTaskClick={handleTaskClick} onComplete={handleCompleteTask} onDelete={handleDeleteTask} />
             ))}
           </div>
         </motion.section>

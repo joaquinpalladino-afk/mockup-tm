@@ -88,7 +88,7 @@ const NavBar = ({ onNewTaskClick }: NavBarProps) => {
             >
               <div className="mobile-menu-header">
                 <Link href="/" className="flex items-center gap-2">
-                  <Image src="/favicon.svg" alt="Loomtask Logo" width={24} height={24} />
+                  <Image src="/favicon.png" alt="Loomtask Logo" width={24} height={24} />
                   <Text className="brand-text">Loomtask</Text>
                 </Link>
                 <Button variant="soft" onClick={() => setIsMenuOpen(false)} className="nav-button">

@@ -6,20 +6,44 @@ import * as Select from "@radix-ui/react-select";
 import { Cross2Icon, CheckIcon, ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons";
 import { Circle } from "lucide-react";
 
+type Task = {
+  id: number;
+  title: string;
+  description: string;
+  dueDate: string;
+  priority: "high" | "medium" | "low";
+  tags: string[];
+  status: string;
+};
+
 interface NewTaskProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
+  onAddTask: (task: Omit<Task, 'id' | 'status'>) => void;
 }
 
 const tags = ["Bug", "Feature", "Enhancement", "Documentation", "Help needed"];
 
-export function NewTask({ isOpen, onOpenChange }: NewTaskProps) {
+export function NewTask({ isOpen, onOpenChange, onAddTask }: NewTaskProps) {
   const [selectedTags, setSelectedTags] = React.useState<string[]>([]);
+  const [priority, setPriority] = React.useState<"high" | "medium" | "low">("medium");
 
   const handleTagClick = (tag: string) => {
     setSelectedTags(prev => 
       prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const dueDate = formData.get("expiresAt") as string;
+
+    onAddTask({ title, description, dueDate, priority, tags: selectedTags });
+    onOpenChange(false);
+    setSelectedTags([]);
   };
 
   return (
@@ -31,7 +55,7 @@ export function NewTask({ isOpen, onOpenChange }: NewTaskProps) {
             Create a New Task
           </Dialog.Title>
           
-          <form className="flex flex-col space-y-4">
+          <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
             <fieldset className="flex flex-col">
               <label className="text-sm font-medium text-[--foreground] mb-2" htmlFor="title">
                 Title
@@ -39,6 +63,7 @@ export function NewTask({ isOpen, onOpenChange }: NewTaskProps) {
               <input
                 className="bg-neutral-800 border border-neutral-700 text-[--foreground] text-sm rounded-md h-10 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 id="title"
+                name="title"
                 placeholder="e.g., Implement user authentication"
               />
             </fieldset>
@@ -50,6 +75,7 @@ export function NewTask({ isOpen, onOpenChange }: NewTaskProps) {
               <textarea
                 className="bg-neutral-800 border border-neutral-700 text-[--foreground] text-sm rounded-md p-3 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                 id="description"
+                name="description"
                 rows={4}
                 placeholder="Add a more detailed description..."
               />
@@ -82,7 +108,7 @@ export function NewTask({ isOpen, onOpenChange }: NewTaskProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <fieldset>
                 <label className="text-sm font-medium text-[--foreground] mb-2 block">Priority</label>
-                <Select.Root>
+                <Select.Root value={priority} onValueChange={(value: "high" | "medium" | "low") => setPriority(value)}>
                   <Select.Trigger className="inline-flex items-center justify-between rounded-md px-4 h-10 gap-2 bg-neutral-800 border border-neutral-700 text-sm text-[--foreground] hover:bg-neutral-700 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
                     <Select.Value placeholder="Select priority..." />
                     <Select.Icon>
@@ -115,6 +141,7 @@ export function NewTask({ isOpen, onOpenChange }: NewTaskProps) {
                   type="datetime-local"
                   className="bg-neutral-800 border border-neutral-700 text-[--foreground] text-sm rounded-md h-10 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   id="expiresAt"
+                  name="expiresAt"
                 />
               </fieldset>
             </div>
