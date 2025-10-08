@@ -6,6 +6,7 @@ import { Button, Text } from '@radix-ui/themes';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface NavBarProps {
   onNewTaskClick: () => void;
@@ -40,7 +41,10 @@ const NavBar = ({ onNewTaskClick }: NavBarProps) => {
     <>
       <nav className={`navbar ${hasScrolled ? 'scrolled' : ''}`}>
         <div className="navbar-left">
-          <Text className="brand-text">Loomtask</Text>
+          <Link href="/" className="flex items-center gap-2">
+            <Image src="/favicon.png" alt="Loomtask Logo" width={30} height={30} />
+            <Text className="brand-text">Loomtask</Text>
+          </Link>
         </div>
 
         {/* Desktop Navigation */}
@@ -83,7 +87,10 @@ const NavBar = ({ onNewTaskClick }: NavBarProps) => {
               className="mobile-menu"
             >
               <div className="mobile-menu-header">
-                <Text className="brand-text">Loomtask</Text>
+                <Link href="/" className="flex items-center gap-2">
+                  <Image src="/favicon.svg" alt="Loomtask Logo" width={24} height={24} />
+                  <Text className="brand-text">Loomtask</Text>
+                </Link>
                 <Button variant="soft" onClick={() => setIsMenuOpen(false)} className="nav-button">
                   <Cross1Icon width="20" height="20" />
                 </Button>
